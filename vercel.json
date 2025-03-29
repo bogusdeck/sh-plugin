@@ -1,8 +1,15 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "manage.py",
+      "use": "vercel-python"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "Sortaroo/wsgi.py"
+      "dest": "manage.py"
     }
   ]
 }
