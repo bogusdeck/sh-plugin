@@ -41,8 +41,9 @@ def login(request):
         return JsonResponse({'error': 'Shop URL parameter is required'}, status=400)
 
     scope = apps.get_app_config('shopify_app').SHOPIFY_API_SCOPE
-    ngrok_url = os.environ.get('BACKEND_URL')
-    redirect_uri = f"{ngrok_url}{reverse('finalize')}".replace('p//', 'p/')
+    backend_url = os.environ.get('BACKEND_URL')
+    redirect_uri = f"{backend_url}{reverse('finalize')}".replace('p//', 'p/')
+    print(redirect_uri)
     
     state = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
     request.session['shopify_oauth_state_param'] = state
