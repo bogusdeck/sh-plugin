@@ -10,7 +10,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ec2-3-108-104-68.ap-south-1.compute.amazonaws.com','devbackend.pearchace.com','0.0.0.0:8000','3.108.104.68', '159.89.170.203']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 
+                 'ec2-3-108-104-68.ap-south-1.compute.amazonaws.com',
+                 'devbackend.pearchace.com',
+                 '0.0.0.0:8000','3.108.104.68',
+                 '159.89.170.203', 'sortaroo.vercel.app']
 
 
 INSTALLED_APPS = [
