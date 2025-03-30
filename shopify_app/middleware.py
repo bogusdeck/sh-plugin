@@ -1,4 +1,6 @@
 from django.middleware.common import MiddlewareMixin
+from django.shortcuts import redirect
+from django.http import JsonResponse
 from django.apps import apps
 from django.urls import reverse
 import shopify
@@ -27,3 +29,19 @@ class LoginProtection(object):
         return response
 
 
+
+class ShopifyAuthMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        shop_url = request.session.get("shopify", {}).get("shop_url")
+        access_token = request.session.get("shopify", {}).get("access_token")
+
+        if not shop_url or not access_token:
+            if request.path.startswith("/api/"):
+                return JsonResponse({"error": "Unauthorized"}, status=403)
+            return redirect(f"/login/?next={request.path}")
+        
+        return self.get_response(request)
+    

@@ -176,11 +176,13 @@ def index(request):
         logger.debug(f"Frontend URL: {frontend_url}")
         logger.debug(f"Generated access token: {access_token}")
         
-        redirect_url = f"{frontend_url}?access_token={access_token}&refresh_token={refresh_token}&shop_url={shop_url}&created={newcomer}"
-        logger.info("Redirecting to frontend with tokens and shop URL.")
+        # redirect_url = f"{frontend_url}?access_token={access_token}&refresh_token={refresh_token}&shop_url={shop_url}&created={newcomer}"
+        # logger.info("Redirecting to frontend with tokens and shop URL.")
         
-        return redirect(redirect_url)
+        # return redirect(redirect_url)
 
+        return redirect(f"/dashboard/?client_id={shop_id}")
+    
     except Exception as e:
         logger.exception("An error occurred in the index function.")
         return JsonResponse({"error": str(e)}, status=500)

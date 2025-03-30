@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Collection Manager - Pearch{% endblock %}
+{% block title %}Collection Manager - Sortaroo{% endblock %}
 
 {% block content %}
 <!-- Notification Banner -->
@@ -13,13 +13,16 @@
 <div class="container mx-auto px-6 mt-6">
     <h1 class="text-2xl font-bold text-gray-800">Manage Your Collections</h1>
     <p class="text-gray-600 text-sm mt-1">
-        Your collection was last sorted on: <span class="text-blue-600 font-semibold">2025-03-22 03:07:50 IST</span>
+        Your collection was last sorted on: 
+        <span class="text-blue-600 font-semibold">
+            {{ last_sorted_time|default:"N/A" }}
+        </span>
     </p>
 
     <!-- Tabs -->
     <div class="mt-6 border-b">
         <ul class="flex space-x-6 text-gray-600">
-            <li class="pb-2 border-b-2 border-black font-semibold">All</li>
+            <li class="pb-2 border-b-2 border-black font-semibold cursor-pointer">All</li>
             <li class="pb-2 cursor-pointer hover:text-gray-900">Active</li>
             <li class="pb-2 cursor-pointer hover:text-gray-900">Inactive</li>
             <li class="pb-2 cursor-pointer hover:text-gray-900 flex items-center">
@@ -59,14 +62,14 @@
                     <td class="p-4">
                         <div class="font-semibold">{{ collection.name }}</div>
                         <div class="text-xs text-gray-500">
-                            Last Sorted on: {{ collection.last_sorted }}<br>
-                            Product count: {{ collection.product_count }}<br>
-                            Synchronize frequency: {{ collection.frequency }}
+                            Last Sorted on: {{ collection.last_sorted|default:"N/A" }}<br>
+                            Product count: {{ collection.product_count|default:"0" }}<br>
+                            Synchronize frequency: {{ collection.frequency|default:"N/A" }}
                         </div>
                     </td>
                     <td class="p-4">
                         <select class="border rounded px-2 py-1">
-                            <option>{{ collection.strategy }}</option>
+                            <option>{{ collection.strategy|default:"None" }}</option>
                         </select>
                     </td>
                     <td class="p-4">
@@ -84,6 +87,10 @@
                             🔄 Sort Now
                         </button>
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="p-4 text-center text-gray-500">No collections found.</td>
                 </tr>
                 {% endfor %}
             </tbody>

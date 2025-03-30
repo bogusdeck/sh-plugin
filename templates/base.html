@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Pearch{% endblock %}</title>
+    <title>{% block title %}Sortaroo{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100">
@@ -11,52 +11,53 @@
     <nav class="bg-white shadow-md">
     <div class="container mx-auto flex items-center justify-between py-4 px-6">
         <!-- Logo -->
-        <a href="/" class="text-2xl font-bold text-gray-800 flex items-center">
-            <span class="tracking-wide">PEARCH</span>
+        <a href="/dashboard?client_id={{ client_id }}" class="text-2xl font-bold text-gray-800 flex items-center">
+            <span class="tracking-wide">SORTaroo</span>
         </a>
 
         <!-- Navigation Links -->
         <div class="hidden md:flex space-x-8">
-            <a href="/" class="flex flex-col items-center text-blue-600 font-semibold">
-                <span class="text-xl">⬜</span> <!-- Icon -->
+            <a href="/dashboard?client_id={{ client_id }}" class="flex flex-col items-center text-blue-600 font-semibold">
+                <span class="text-xl">⬜</span>
                 <span class="text-sm">Dashboard</span>
             </a>
-            <a href="/collections" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">🗃️</span> <!-- Icon -->
+            <a href="/collections?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">🗃️</span>
                 <span class="text-sm">Collection Manager</span>
             </a>
-            <a href="/sorting" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">🔧</span> <!-- Icon -->
+            <a href="/sorting?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">🔧</span>
                 <span class="text-sm">Sorting Config</span>
             </a>
-            <a href="/rules" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">⬆️</span> <!-- Icon -->
+            <a href="/rules?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">⬆️</span>
                 <span class="text-sm">Sorting Rules</span>
             </a>
-            <a href="/settings" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">⚙️</span> <!-- Icon -->
+            <a href="/settings?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">⚙️</span>
                 <span class="text-sm">Global Settings</span>
             </a>
-            <a href="/billing" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">💲</span> <!-- Icon -->
+            <a href="/billing?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">💲</span>
                 <span class="text-sm">Billing</span>
             </a>
-            <a href="/history" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">🔄</span> <!-- Icon -->
+            <a href="/history?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">🔄</span>
                 <span class="text-sm">History</span>
             </a>
-            <a href="/faqs" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
-                <span class="text-xl">💬</span> <!-- Icon -->
+            <a href="/faqs?client_id={{ client_id }}" class="flex flex-col items-center text-gray-600 hover:text-gray-900">
+                <span class="text-xl">💬</span>
                 <span class="text-sm">FAQs</span>
             </a>
         </div>
+
 
         <!-- Support & User Profile -->
         <div class="flex items-center space-x-6">
             <a href="/support" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700">
                 Contact Support
             </a>
-            <span class="text-gray-800 font-semibold">Pearch-test1</span>
+            <span class="text-gray-800 font-semibold">profile-name</span>
         </div>
     </div>
     </nav>

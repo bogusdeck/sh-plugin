@@ -44,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'shopify_app.middleware.LoginProtection',
+    'shopify_app.middleware.ShopifyAuthMiddleware'
 ]
 
 ROOT_URLCONF = 'Sortaroo.urls'
@@ -94,6 +95,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'shopify_app.context_processors.current_shop',
+                'shopify_app.context_processors.client_id_processor'
             ],
         },
     },
