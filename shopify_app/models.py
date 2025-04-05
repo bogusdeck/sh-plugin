@@ -276,3 +276,17 @@ class History(models.Model):
 
     def __str__(self):
         return f"{self.collection_name} - {self.status} - {self.requested_by}"
+
+class FAQS(models.Model):
+    id = models.AutoField(primary_key=True)
+    question = models.TextField()
+    answer = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "FAQ"
+        verbose_name_plural = "FAQs"
+
+    def __str__(self):
+        return self.question

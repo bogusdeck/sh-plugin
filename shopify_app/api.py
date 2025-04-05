@@ -798,7 +798,6 @@ def fetch_order_for_billing(shop_url, start_date, end_date):
     api_version = apps.get_app_config("shopify_app").SHOPIFY_API_VERSION
     headers = _get_shopify_headers(access_token)
     url = f"https://{shop_url}/admin/api/{api_version}/graphql.json"
-    logger.debug(f"URL: {url}")
     
     total_orders = 0
     has_next_page = True
@@ -855,7 +854,5 @@ def fetch_order_for_billing(shop_url, start_date, end_date):
             total_orders += len(new_orders)
         else:
             has_next_page = False
-
-    logger.debug(f"Total orders: {total_orders}")
     return total_orders
 

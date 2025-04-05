@@ -1,9 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}billing - Sortaroo{% endblock %}
+{% block title %}Billing - Sortaroo{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-gray-800">Welcome to sortaroo</h1>
-<p class="text-gray-600 mt-2">This is a simple page using the base template.</p>
-{% endblock %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Current Plan</h1>
 
+    {% if current_subscription %}
+    <div class="border rounded-lg shadow-md bg-white p-6 mb-10">
+        <div class="text-center text-xl font-semibold mb-4">
+            Current plan summary: <span class="font-bold">{{ current_subscription.plan_name }}</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+            <div>
+                <p class="font-bold">Billing Cycle</p>
+                <p class="text-blue-600">{{ current_subscription.billing_cycle }}</p>
+            </div>
+            <div>
+                <p class="font-bold">Bill Activation Date</p>
+                <p class="text-blue-600">{{ current_subscription.current_period_start|date:"d F Y" }}</p>
+            </div>
+            <div>
+                <p class="font-bold">Next Billing Date</p>
+                <p class="text-blue-600">{{ current_subscription.next_billing_date|date:"d F Y" }}</p>
+            </div>
+            <div>
+                <p class="font-bold">Sorts remaining</p>
+                <p class="text-blue-600">{{ current_subscription.sort_remaining }}</p>
+            </div>
+            <div>
+                <p class="font-bold">Sorts Top-up</p>
+                <p class="text-blue-600">{{ current_subscription.extra_sort }}</p>
+            </div>
+            <div>
+                <p class="font-bold">Orders Last Month</p>
+                <p class="text-blue-600">{{ current_subscription.order_count }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <p class="text-red-600">Unable to fetch current subscription details.</p>
+    {% endif %}
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Choose a Plan</h2>
+
+    <div class="grid gap-6">
+        {% for plan in subscription_plans %}
+        <div class="border-2 rounded-lg p-6 bg-white shadow relative">
+            {% if current_subscription.plan_name == plan.name %}
+                <div class="absolute top-0 left-0 bg-green-600 text-white text-sm font-bold px-3 py-1 rounded-br-lg">
+                    Currently active
+                </div>
+            {% endif %}
+            <h3 class="text-2xl font-semibold text-gray-900 mb-2">{{ plan.name }}</h3>
+            <p class="text-3xl font-bold text-blue-700 mb-1">${{ plan.cost_month }} <span class="text-base font-medium text-gray-500">USD / month</span></p>
+            <p class="text-sm text-gray-500 mb-4">(or ${{ plan.cost_annual }} billed yearly)</p>
+            <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1 mb-4">
+                <li>{{ plan.sort_limit }} sorts per month</li>
+                <li>Upto {{ plan.order_limit }} orders</li>
+                <li>Email Support</li>
+                {% if plan.name|lower != "limited" %}
+                    <li>Performance Metrics</li>
+                    <li>Analytics</li>
+                {% endif %}
+            </ul>
+            <p class="text-sm mb-2">Extra sorts: {{ plan.addon_sorts_count }} for ${{ plan.addon_sorts_price }}</p>
+            <form action="{% url 'initiate_payment' plan.plan_id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700">
+                    Subscribe →
+                </button>
+            </form>
+            <p class="text-xs text-center text-gray-400 mt-2">14-days free trial*</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

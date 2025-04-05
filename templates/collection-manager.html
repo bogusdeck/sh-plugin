@@ -19,6 +19,17 @@
         </span>
     </p>
 
+    <!-- Sync Collections Message -->
+    {% if not collections %}
+    <div class="mt-4 bg-red-100 text-red-800 px-6 py-3 text-sm rounded-lg text-center">
+        <p>Your collections are not showing here.</p>
+        <p>Try to sync it manually.</p>
+        <button id="syncCollectionsBtn" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Sync Collections
+        </button>
+    </div>
+    {% endif %}
+
     <!-- Tabs -->
     <div class="mt-6 border-b">
         <ul class="flex space-x-6 text-gray-600">
@@ -37,6 +48,7 @@
     </div>
 
     <!-- Table -->
+    {% if collections %}
     <div class="mt-6 bg-white shadow-md rounded-lg overflow-hidden">
         <table class="w-full">
             <thead class="bg-gray-100">
@@ -83,18 +95,58 @@
                         </button>
                     </td>
                     <td class="p-4">
-                        <button class="border px-3 py-1 text-gray-400 rounded-md cursor-not-allowed">
+                        <button class="sort-btn border px-3 py-1 text-blue-600 rounded-md hover:bg-blue-100"
+                                data-collection-id="{{ collection.id }}">
                             🔄 Sort Now
                         </button>
                     </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="p-4 text-center text-gray-500">No collections found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% endif %}
 </div>
+
+<!-- JavaScript -->
+<script>
+document.getElementById("syncCollectionsBtn")?.addEventListener("click", function() {
+    fetch("/api/sync-collections/")
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Collections synced successfully! Refresh the page to see changes.");
+            location.reload();
+        } else {
+            alert("Failed to sync collections. Please try again later.");
+        }
+    })
+    .catch(error => {
+        alert("An error occurred while syncing collections.");
+        console.error(error);
+    });
+});
+
+// Sort Button Handler (if you later map API)
+document.querySelectorAll(".sort-btn").forEach(button => {
+    button.addEventListener("click", function() {
+        const collectionId = this.dataset.collectionId;
+        fetch(`/api/sort-collection/${collectionId}/`, { method: "POST" })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Sorting started!");
+                location.reload();
+            } else {
+                alert("Sorting failed. Please try again.");
+            }
+        })
+        .catch(error => {
+            alert("An error occurred.");
+            console.error(error);
+        });
+    });
+});
+</script>
+
 {% endblock %}

@@ -1,9 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}settings - Sortaroo{% endblock %}
+{% block title %}Settings - Sortaroo{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-gray-800">Welcome to sortaroo</h1>
-<p class="text-gray-600 mt-2">This is a simple page using the base template.</p>
-{% endblock %}
+<h1 class="text-2xl font-bold mb-6 text-black">Global Settings</h1>
 
+{% if messages %}
+    {% for message in messages %}
+        <p class="text-green-600">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+<form method="POST" id="settings-form" class="space-y-6 text-black">
+    {% csrf_token %}
+
+    <!-- Schedule Frequency -->
+    <div>
+        <label class="block font-semibold mb-2">Schedule Frequency:</label>
+        {% for radio in form.schedule_frequency %}
+            <label class="inline-flex items-center mr-4">
+                {{ radio.tag }} <span class="ml-2">{{ radio.choice_label }}</span>
+            </label>
+        {% endfor %}
+    </div>
+
+    <!-- Custom Fields (Initially Hidden) -->
+    <div id="custom-fields" class="space-y-4 hidden">
+        <div>
+            <label class="block mb-1 font-medium">{{ form.custom_start_time.label }}</label>
+            {{ form.custom_start_time }}
+        </div>
+
+        <div>
+            <label class="block mb-1 font-medium">{{ form.custom_stop_time.label }}</label>
+            {{ form.custom_stop_time }}
+        </div>
+
+        <div>
+            <label class="block mb-1 font-medium">{{ form.custom_frequency_in_hours.label }}</label>
+            {{ form.custom_frequency_in_hours }}
+        </div>
+    </div>
+
+    <!-- Stock Location -->
+    <div>
+        <label class="block mb-1 font-medium">{{ form.stock_location.label }}</label>
+        {{ form.stock_location }}
+    </div>
+
+
+    <!-- Lookback Period -->
+    <div>
+        <label class="block mb-1 font-medium">{{ form.lookback_period.label }}</label>
+        {{ form.lookback_period }}
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex gap-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Save
+        </button>
+        <button type="reset" onclick="resetForm()" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">
+            Reset
+        </button>
+    </div>
+</form>
+
+<script>
+    function toggleCustomFields() {
+        const selected = document.querySelector('input[name="schedule_frequency"]:checked');
+        const customFields = document.getElementById('custom-fields');
+        if (selected && selected.value === 'custom') {
+            customFields.classList.remove('hidden');
+        } else {
+            customFields.classList.add('hidden');
+        }
+    }
+
+    window.onload = function () {
+        toggleCustomFields();
+        document.querySelectorAll('input[name="schedule_frequency"]').forEach(radio => {
+            radio.addEventListener('change', toggleCustomFields);
+        });
+    };
+</script>
+{% endblock %}

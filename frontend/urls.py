@@ -10,5 +10,6 @@ urlpatterns = [
     path('settings/', views.global_settings, name="global_settings"),
     path('billing/', views.billings, name="billing"),
     path('history/', views.history, name="history"),
-    path('faqs', views.faqs,  name="faqs")
+    path('faqs', views.faqs,  name="faqs"),
+    path('billing_page', views.billing_page, name="billing_page"),
 ]

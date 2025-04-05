@@ -3,7 +3,46 @@
 {% block title %}Home - Sortaroo{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-gray-800">Welcome to sortaroo</h1>
-<p class="text-gray-600 mt-2">This is a simple page using the base template.</p>
-{% endblock %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4">Dashboard</h1>
+    
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <p class="text-lg font-semibold">Welcome, <span class="text-blue-600">{{ shop_name }}</span></p>
+        <p class="text-gray-700">Shop URL: <a href="{{ shop_url }}" class="text-blue-500 underline">{{ shop_url }}</a></p>
+        <p class="text-gray-700">Subscription Status: 
+            <span class="px-2 py-1 rounded 
+    {% if subscription_status == 'Active' %} bg-green-200 text-green-800 
+    {% else %} bg-red-200 text-red-800 
+    {% endif %}">
+    {{ subscription_status }}
+</span>
 
+        </p>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-2">Available Sorts</h2>
+        <p class="text-gray-700">{{ available_sorts }}</p>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-2">Last Active Collections</h2>
+        {% if collections %}
+            <ul class="list-disc pl-5 space-y-2">
+                {% for collection in collections %}
+                    <li class="bg-gray-100 p-4 rounded-lg">
+                        <span class="font-semibold">{{ collection.collection_name }}</span> - 
+                        {{ collection.product_count }} products 
+                        <span class="text-gray-600 text-sm">
+                            (Sorted on {{ collection.sort_date }} using {{ collection.algo_name }})
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-700">No recent collections found.</p>
+            <p class="text-red-500 text-sm italic">DEBUG: collections is empty or not passed to template.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

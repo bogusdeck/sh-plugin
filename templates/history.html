@@ -2,8 +2,77 @@
 
 {% block title %}History - Sortaroo{% endblock %}
 
-{% block content %}
-<h1 class="text-3xl font-bold text-gray-800">Welcome to sortaroo</h1>
-<p class="text-gray-600 mt-2">This is a simple page using the base template.</p>
-{% endblock %}
 
+{% block content %}
+    
+<div class="max-w-7xl mx-auto px-4">
+    <h2 class=" font-bold text-center mb-6 text-purple-700">History Logs</h2>
+
+    <div class="overflow-x-auto shadow-lg rounded-lg">
+        <table class="w-full bg-white text-gray-600 border-collapse rounded-lg overflow-hidden shadow-md">
+            <thead class="bg-gray-700 text-white text-sm uppercase font-semibold sticky top-0 rounded-t-lg">
+                <tr>
+                    <th class="px-4 py-3 text-left">Sr. No.</th>
+                    <th class="px-4 py-3 text-left">Request At</th>
+                    <th class="px-4 py-3 text-left">Started At</th>
+                    <th class="px-4 py-3 text-left">Ended At</th>
+                    <th class="px-4 py-3 text-left">Collection Name</th>
+                    <th class="px-4 py-3 text-left">Requested By</th>
+                    <th class="px-4 py-3 text-left">Product Sorted</th>
+                    <th class="px-4 py-3 text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-300 bg-gray-50">
+                {% if page_obj %}
+                    {% for log in page_obj %}
+                    <tr class="hover:bg-gray-100 transition-all">
+                        <td class="px-4 py-3">{{ log.sr_no }}</td>
+                        <td class="px-4 py-3">{{ log.request_at }}</td>
+                        <td class="px-4 py-3">{{ log.started_at }}</td>
+                        <td class="px-4 py-3">{{ log.ended_at }}</td>
+                        <td class="px-4 py-3">{{ log.collection_name }}</td>
+                        <td class="px-4 py-3">{{ log.requested_by }}</td>
+                        <td class="px-4 py-3">{{ log.product_sorted }}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-3 py-1 min-w-[80px] text-center inline-block rounded-full text-white text-xs font-semibold 
+                            {% if log.status == 'Completed' %} bg-green-500 py-2
+                            {% elif log.status == 'In Progress' %} bg-blue-500 
+                            {% elif log.status == 'Failed' %} bg-red-500 py-2
+                            {% else %} bg-yellow-500 py-2 {% endif %}">
+                                {{ log.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-6 text-gray-500 text-sm h-lvh">
+                            No history logs found.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj %}
+    <div class="flex justify-center mt-5">
+        <nav class="flex space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="px-4 py-2 border rounded-lg bg-cyan-700 hover:bg-cyan-600">1</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 border rounded-lg bg-cyan-700 hover:bg-cyan-600">Previous</a>
+            {% endif %}
+
+            <span class="px-4 py-2 border rounded-lg bg-cyan-700">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 border rounded-lg bg-cyan-700 hover:bg-cyan-600">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="px-4 py-2 border rounded-lg bg-cyan-700 hover:bg-cyan-600">{{ page_obj.paginator.num_pages }}</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
