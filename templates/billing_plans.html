@@ -15,12 +15,19 @@
                 ${{ plan.cost_month }} / month <br>
                 <span class="text-sm text-gray-500">or ${{ plan.cost_annual }} / year</span>
             </p>
-            <form action="{% url 'create_billing_plan'%}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                    Choose Plan
-                </button>
-            </form>
+        <form action="{% url 'redirect_billing' plan.id %}" method="get" class="inline">
+             <input type="hidden" name="is_annual" value="false">
+             <button type="submit" class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">
+                 Monthly
+             </button>
+        </form>
+
+        <form action="{% url 'redirect_billing' plan.id %}" method="get" class="inline">
+            <input type="hidden" name="is_annual" value="true">
+            <button type="submit" class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600">
+                Annual
+            </button>
+        </form>
         </div>
         {% endfor %}
     </div>

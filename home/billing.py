@@ -250,7 +250,7 @@ def create_billing_plan(request):
                     'is_annual': is_annual,
                 }
             )
-            
+
             if not created:
                 # Update existing subscription data to reflect pending status and input parameters
                 subscription.status = 'pending'
@@ -271,7 +271,7 @@ def create_billing_plan(request):
         # Generate billing URL
         billing_url = create_recurring_charge_graphql(shop_url, shop_id, access_token, plan_id, is_annual)
         logger.info("Billing URL successfully generated via GraphQL.")
-        
+
         return JsonResponse({'billing_url': billing_url}, status=status.HTTP_200_OK)
 
     except InvalidToken:

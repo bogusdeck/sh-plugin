@@ -18,6 +18,7 @@ from .forms import GlobalSettingsForm
 from shopify_app.models import Client, Usage, Subscription, SortingPlan, ClientCollections, ClientAlgo, History, FAQS
 from shopify_app.api import fetch_order_for_billing
 from shopify_app.context_processors import subscription_required
+from home.billing import create_recurring_charge_graphql
 
 logger = logging.getLogger(__name__)
 
@@ -193,7 +194,7 @@ def sorting_configuration(request):
 def global_settings(request):
     client, error_response = get_shopify_client(request)
     if error_response:
-        return error_response  
+        return error_response
 
     if request.method == 'POST':
         form = GlobalSettingsForm(request.POST)
@@ -247,7 +248,6 @@ def billings(request):
 
         # Fetch order count for last month
         order_count = fetch_order_for_billing(shop_url, first_day_last_month, last_day_last_month)
-        logger.debug("order_count : ",order_count)
         # Get client
         client = Client.objects.get(shop_url=shop_url)
 
@@ -273,7 +273,6 @@ def billings(request):
 
         # Fetch all sorting plans for this shop
         subscription_plans = SortingPlan.objects.all().order_by('plan_id')
-        logger.debug("subscription_plan :",subscription_plans)
         return render(request, 'billing.html', {
             "current_subscription": current_subscription,
             "subscription_plans": subscription_plans
@@ -323,5 +322,59 @@ def billing_page(request):
     if client.member:
         return redirect('dashboard')
 
-    plans = SortingPlan.objects.all().order_by("plan_id")
+    # Exclude the Free Trial plan from the list
+    plans = SortingPlan.objects.exclude(name="Free Trial").order_by("plan_id")
     return render(request, "billing_plans.html", {"plans": plans})
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def redirect_billing(request, plan_id):
+    client, error_response = get_shopify_client(request)
+    if error_response:
+        return error_response  # Return error if client not found
+
+    shop_url = client.shop_url
+    shop_id = client.shop_id
+    # plan_id = request.GET.get("plan_id")
+    is_annual = request.GET.get("is_annual", "false").lower() == "true"
+
+    if plan_id is None:
+        return Response({'error': 'Plan ID is missing'}, status=status.HTTP_400_BAD_REQUEST)
+    if not isinstance(plan_id, (int, float)):
+        return Response({'error': 'Plan ID must be a number'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if is_annual is None:
+        return Response({'error': 'is_annual is required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not isinstance(is_annual, bool):
+        return Response({'error': 'is_annual must be a boolean'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        subscription, created = Subscription.objects.get_or_create(
+            shop_id=shop_id,
+            defaults={
+                'status': 'pending',
+                'plan_id': plan_id,
+                'is_annual': is_annual,
+            }
+        )
+
+        if not created:
+            subscription.status = 'pending'
+            subscription.plan_id = plan_id
+            subscription.is_annual = is_annual
+            subscription.updated_at = timezone.now()
+            subscription.save()
+            logger.info(f"Subscription updated to pending status for shop_id {shop_id}.")
+        else:
+            logger.info(f"New subscription created with pending status for shop_id {shop_id}.")
+
+    except Exception as e:
+        logger.error(f"Error creating or updating subscription for shop_id {shop_id}: {str(e)}")
+        return Response({'error': 'Failed to create or update subscription'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    billing_url = create_recurring_charge_graphql(shop_url, shop_id, access_token, plan_id, is_annual)
+
+    return redirect(billing_url)
