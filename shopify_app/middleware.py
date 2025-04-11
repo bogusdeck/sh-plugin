@@ -49,6 +49,5 @@ class ShopifyAuthMiddleware:
             if request.path.startswith("/api/"):
                 return JsonResponse({"error": "Unauthorized"}, status=403)
             return render(request, "shopify_login_required.html")
-        
+
         return self.get_response(request)
-    

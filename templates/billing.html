@@ -65,7 +65,7 @@
                 {% endif %}
             </ul>
             <p class="text-sm mb-2">Extra sorts: {{ plan.addon_sorts_count }} for ${{ plan.addon_sorts_price }}</p>
-            <form action="{% url 'initiate_payment' plan.plan_id %}" method="post">
+            <form action="{% url 'redirect_billing' plan.plan_id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700">
                     Subscribe →

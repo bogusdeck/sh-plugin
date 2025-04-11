@@ -3,6 +3,7 @@
 {% block title %}FAQs - Sortaroo{% endblock %}
 
 {% block content %}
+
 <!-- component -->
 {% comment %} <div class="max-w-screen-xl mx-auto px-5 bg-white min-h-sceen"> {% endcomment %}
 	<div class="flex flex-col items-center w-full  ">
@@ -13,7 +14,9 @@
 			Frequenty asked questions
 		</p>
 	</div>
-	<div class="grid divide-y divide-neutral-200 max-w-[90%] mx-auto mt-8">
+	<div class="grid divide-y divide-neutral-200 max-w-[90%] mx-auto mt-8 border border-neutral-200 rounded-lg shadow-sm bg-white p-5 ">
+		
+		
 	{% for faq in faqs %}
 	<div class="py-5">
 			<details class="group">
@@ -34,6 +37,10 @@
 	
 		
 	</div>
+	
+	
+
+
 {% comment %} </div> {% endcomment %}
 
 <script>

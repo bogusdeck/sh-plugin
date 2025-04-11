@@ -6,17 +6,17 @@
     <title>{% block title %}Sortaroo{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen bg-[#ebebeb] text-slate-200">
+    <body class="flex flex-col min-h-screen bg-[#434241] text-slate-200">
 
-    <nav class="bg-white shadow-md">
+    <nav class="bg-slate-700 text-white shadow-md  ">
     <div class="container mx-auto flex items-center justify-between py-4 px-6">
         <!-- Logo -->
         <a href="/dashboard?client_id={{ client_id }}" class="text-2xl font-bold text-gray-800 flex items-center">
-            <span class="tracking-wide">SORTaroo</span>
+            <span class="tracking-wide text-white ">SORTaroo</span>
         </a>
 
         <!-- Navigation Links -->
-        <div class="hidden md:flex space-x-8">
+        <div class="hidden md:flex space-x-8 text-white ">
             <a href="/dashboard" class="flex flex-col items-center text-blue-600 font-semibold">
                 <span class="text-xl">⬜</span>
                 <span class="text-sm">Dashboard</span>

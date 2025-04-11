@@ -15,9 +15,9 @@ class Command(BaseCommand):
             return
 
         # Set the specific values for shop_id and charge_id
-        shop_id = '63270879430'
+        shop_id = '70192955578'
         charge_id = '26896433350'
-        status = 'active'  
+        status = 'active'
 
         # Set the billing dates
         current_period_start = timezone.now()
@@ -35,7 +35,7 @@ class Command(BaseCommand):
             charge_id=charge_id,
             is_annual = False
         )
-        
+
         if created:
             self.stdout.write(self.style.SUCCESS(f'Created subscription: {subscription}'))
         else:
@@ -46,9 +46,9 @@ class Command(BaseCommand):
             shop_id=shop_id,
             subscription=subscription,
             defaults={
-                'sorts_count': 0,  
-                'orders_count': 0,  
-                'addon_sorts_count': 0,  
+                'sorts_count': 0,
+                'orders_count': 0,
+                'addon_sorts_count': 0,
                 'charge_id': charge_id,
                 'usage_date': usage_date,
             }

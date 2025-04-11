@@ -5,7 +5,7 @@ from rest_framework import status
 from home.views import get_client_collections, get_last_sorted_time, search_collections
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render 
+from django.shortcuts import render
 from django.contrib import messages
 import random
 from datetime import datetime, timedelta
@@ -171,20 +171,65 @@ def sorting_rules(request):
         return error_response  # Return error if client not found
 
     shop_id = client.shop_id
+    default_algo = client.default_algo
+    def get_algorithm_description(algo_name):
+        descriptions = {
+            "Promote New": "Highlight recently added products to captivate customer interest.",
+            "Promote High Revenue Products": "Showcase products that generate the most revenue to maximize profitability.",
+            "Promote High Inventory Products": "Prioritize products with high stock levels to encourage quicker sales.",
+            "Bestsellers": "Feature your most popular products to drive proven customer favorites.",
+            "Promote High Variant Availability": "Focus on products with the widest variant options to meet diverse needs.",
+            "I Am Feeling Lucky": "Add an element of surprise with a dynamic, randomized product display, selected by our Advanced AI engine.",
+            "RFM Sort": "Add an element of surprise with a dynamic, randomized product display, selected by our Advanced AI engine."
+        }
+        return descriptions.get(algo_name, "Description not available.")
 
-    # Fetch sorting algorithms
     try:
         primary_algorithms = ClientAlgo.objects.filter(is_primary=True)
-        client_algorithms = ClientAlgo.objects.filter(shop_id=client)
-        default_algo = client.default_algo
+        primary_algo_data = []
+        for algo in primary_algorithms:
+            primary_algo_data.append({
+                "algo_id": algo.algo_id,
+                "name": algo.algo_name,
+                "description": get_algorithm_description(algo.algo_name),
+                "default": algo == default_algo
+            })
+            logger.info("Primary algorithm %s added to response", algo.algo_name)
+
+        client_algorithms = ClientAlgo.objects.filter(shop_id=shop_id)
+
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
     return render(request, "sorting-rule.html", {
         "default_algo": default_algo,
-        "primary_algorithms": primary_algorithms,
+        "primary_algorithms": primary_algo_data,
         "client_algorithms": client_algorithms
     })
+
+@csrf_protect # TODO can use messege to flash msg or toastr to user
+def update_default_algo(request):
+    if request.method == "POST":
+        algo_id = request.POST.get("algo_id")
+
+        if not algo_id:
+            messages.error(request, "No algorithm ID provided.")
+            return redirect("sorting_rules_page")  # replace with your actual template name
+
+        # Unset previous default
+        ClientAlgo.objects.filter(user=request.user, default=True).update(default=False)
+
+        # Set the selected one
+        updated = ClientAlgo.objects.filter(user=request.user, algo_id=algo_id).update(default=True)
+
+        if updated == 0:
+            messages.error(request, "Algorithm not found or not accessible.")
+        else:
+            messages.success(request, "Default algorithm updated successfully.")
+
+        return redirect("sorting_rules_page")  # replace with the view name that renders the page
+
+    return redirect("sorting_rules_page")
 
 @subscription_required
 def sorting_configuration(request):
@@ -232,7 +277,7 @@ def global_settings(request):
     return render(request, 'global-settings.html', {'form': form})
 
 @subscription_required
-def billings(request):
+def billing(request):
     client, error_response = get_shopify_client(request)
     if error_response:
         return error_response
@@ -272,7 +317,7 @@ def billings(request):
         }
 
         # Fetch all sorting plans for this shop
-        subscription_plans = SortingPlan.objects.all().order_by('plan_id')
+        subscription_plans = SortingPlan.objects.exclude(name="Free Trial").order_by("plan_id")
         return render(request, 'billing.html', {
             "current_subscription": current_subscription,
             "subscription_plans": subscription_plans
@@ -324,13 +369,13 @@ def billing_page(request):
 
     # Exclude the Free Trial plan from the list
     plans = SortingPlan.objects.exclude(name="Free Trial").order_by("plan_id")
+
     return render(request, "billing_plans.html", {"plans": plans})
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.http import require_GET
+from django.utils import timezone
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@require_GET
 def redirect_billing(request, plan_id):
     client, error_response = get_shopify_client(request)
     if error_response:
@@ -338,7 +383,6 @@ def redirect_billing(request, plan_id):
 
     shop_url = client.shop_url
     shop_id = client.shop_id
-    # plan_id = request.GET.get("plan_id")
     is_annual = request.GET.get("is_annual", "false").lower() == "true"
 
     if plan_id is None:
@@ -350,6 +394,10 @@ def redirect_billing(request, plan_id):
         return Response({'error': 'is_annual is required'}, status=status.HTTP_400_BAD_REQUEST)
     if not isinstance(is_annual, bool):
         return Response({'error': 'is_annual must be a boolean'}, status=status.HTTP_400_BAD_REQUEST)
+
+    access_token = client.access_token
+    if not access_token:
+        return Response({'error': 'Access token is missing'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         subscription, created = Subscription.objects.get_or_create(

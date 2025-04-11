@@ -150,7 +150,7 @@ class ClientProducts(models.Model):
     
 #new
 class ClientAlgo(models.Model):
-    shop = models.ForeignKey('Client', on_delete=models.CASCADE, to_field='shop_id', null=True, blank=True)  
+    shop = models.ForeignKey('Client', on_delete=models.CASCADE, to_field='shop_id', null=True, blank=True)
     algo_id = models.AutoField(primary_key=True)
     algo_name = models.CharField(max_length=255)
     number_of_buckets = models.IntegerField()

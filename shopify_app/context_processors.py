@@ -15,7 +15,7 @@ def subscription_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         shop_url = request.session.get("shopify", {}).get("shop_url")
         if not shop_url:
-            return render(request, "shopify_login_required.html")  
+            return render(request, "shopify_login_required.html")
 
         client = Client.objects.get(shop_url=shop_url)
 
