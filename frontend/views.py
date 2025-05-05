@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from datetime import datetime, date
 from django.core.paginator import Paginator
 from django.utils.timezone import localtime
+from django.views.decorators.csrf import csrf_protect
 import logging
 
 from .forms import GlobalSettingsForm
@@ -203,6 +204,7 @@ def sorting_rules(request):
 
     return render(request, "sorting-rule.html", {
         "default_algo": default_algo,
+        "default_algo_description": get_algorithm_description(default_algo.algo_name),
         "primary_algorithms": primary_algo_data,
         "client_algorithms": client_algorithms
     })

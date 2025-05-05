@@ -89,3 +89,8 @@ code file structure
 - elastic search setup if possible for faster fetching and updation
 - sentry for issues
 - email setup
+
+
+
+
+https://vigilant-guacamole-7xxv69rjr49crwqq-8000.app.github.dev/auth/login/?shop=dequbee.shopify.com

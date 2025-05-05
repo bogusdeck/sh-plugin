@@ -14,7 +14,7 @@
             <span class="text-blue-600 font-semibold">{{ default_algo.algo_name }}</span>
         </p>
         <p class="text-sm text-gray-600 mt-1">
-            {{ default_algo.description|default:"No description available." }}
+            {{ default_algo_description|default:"No description available." }}
         </p>
     </div>
 
@@ -62,7 +62,7 @@
                     {% if algo.default %}disabled class="cursor-not-allowed opacity-50"{% endif %}
                 >
                     {% if algo.default %}Selected{% else %}Set as Default{% endif %}
-                </button>
+                </button>               
             </div>
             {% endfor %}
         </div>
